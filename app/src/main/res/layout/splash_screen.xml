@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?> <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/holo_blue_light">
+
+    <TextView
+        android:id="@+id/textViewApp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/imageViewLogo"
+        android:layout_centerHorizontal="true"
+        android:text="The To-Do App"
+        android:textColor="@android:color/white"
+        android:textSize="32sp"
+        android:textStyle="bold">
+    </TextView>
+
+    <ImageView
+        android:id="@+id/imageViewLogo"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:src="@drawable/ic_android_black_white"
+        android:layout_centerInParent="true">
+    </ImageView>
+
+    <TextView
+        android:id="@+id/founderTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="by Wickman Enterprise®"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="32dp"
+        android:textColor="@android:color/white">
+    </TextView>
+
+
+</RelativeLayout>

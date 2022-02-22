@@ -1,0 +1,60 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/newItemTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
+        android:text="New Item"
+        android:textColor="@android:color/holo_blue_light"
+        android:textSize="24sp"
+        android:textStyle="bold"></TextView>
+
+    <EditText
+        android:id="@+id/inputItemEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/newItemTextView"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:hint="Enter a name">
+    </EditText>
+
+    <Button
+        android:id="@+id/selectImageButton"
+        android:layout_width="240dp"
+        android:layout_height="60dp"
+        android:layout_below="@id/inputItemEditText"
+        android:layout_centerHorizontal="true"
+        android:text="Upload Image"
+        android:backgroundTint="@android:color/holo_blue_light"
+        android:textColor="@android:color/white">
+    </Button>
+
+    <Button
+        android:id="@+id/saveButton"
+        android:layout_width="240dp"
+        android:layout_height="60dp"
+        android:layout_below="@+id/selectImageButton"
+        android:layout_centerHorizontal="true"
+        android:padding="16dp"
+        android:backgroundTint="@android:color/holo_green_dark"
+        android:textColor="@android:color/white"
+        android:layout_marginBottom="8dp"
+        android:text="save">
+    </Button>
+
+    <ImageView
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:id="@+id/previewImageView"
+        android:layout_below="@+id/inputItemEditText"
+        android:layout_alignParentEnd="true"
+        android:layout_marginRight="32dp"
+        android:layout_marginTop="16dp">
+    </ImageView>
+
+</RelativeLayout>
