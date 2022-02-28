@@ -1,6 +1,7 @@
 package com.example.mytest;
 
 import android.app.Activity;
+import android.content.ClipData;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
@@ -62,14 +63,17 @@ public class AddNewItem extends BottomSheetDialogFragment {
         saveButton = view.findViewById(R.id.saveButton);
         previewImage = view.findViewById(R.id.previewImageView);
 
+        boolean isUpdate = false;
         final Bundle bundle = getArguments();
 
         if (bundle != null) {
+            isUpdate = true;
             String item = bundle.getString("item");
             inputText.setText((item));
             if (item.length() > 0) {
                 inputText.setTextColor(ContextCompat.getColor(getContext(), R.color.black));
             }
+
             inputText.addTextChangedListener(new TextWatcher() {
                 @Override
                 public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -109,25 +113,23 @@ public class AddNewItem extends BottomSheetDialogFragment {
             }
         });
 
+        final boolean finalIsUpdate = isUpdate;
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String text = inputText.getText().toString();
                 String imageRes = selectedImage.toString();
-                if (!text.equals("")) {
+                if(finalIsUpdate){
+                    db.updateItem(bundle.getInt("id"), text);
+                }
+                else {
                     ItemModel item = new ItemModel();
                     item.setTitle(text);
                     item.setImageRes(imageRes);
                     item.setFavoriteStatus(0);
-                    itemsList.add(item);
-                    inputText.getText().clear();
-                    createToast(text + " has been added!");
                     db.insertItem(item);
-                    dismiss();
                 }
-                else {
-                    createToast("Please enter a title!");
-                }
+                dismiss();
             }
         });
         return view;

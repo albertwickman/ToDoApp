@@ -13,24 +13,33 @@ import java.util.List;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
-    public static final int VERSION = 2;
-    public static final String TABLE_NAME = "FeedReader.db";
+    private static final int VERSION = 2;
+    private static final String NAME = "FeedReader.db";
+    public static final String TABLE_NAME = "entry";
+    public static final String COLUMN_NAME_TITLE = "title";
+    public static final String COLUMN_NAME_IMAGE = "subtitle";
+    public static final String COLUMN_NAME_STATUS = "status";
+    public static final String COLUMN_NAME_ID = "status";
+
+    private static final String SQL_CREATE_ENTRIES = "CREATE TABLE " + TABLE_NAME + "(" + COLUMN_NAME_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + COLUMN_NAME_TITLE + " TEXT, "
+            + COLUMN_NAME_IMAGE + " INTEGER, " + COLUMN_NAME_STATUS + " INTEGER)";
 
     private SQLiteDatabase db;
 
     public DatabaseHelper(Context context) {
-        super(context, TABLE_NAME, null, VERSION);
+        super(context, NAME, null, VERSION);
     }
 
+    @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL(DatabaseContract.FeedEntry.SQL_CREATE_ENTRIES);
-        //db.execSQL(DatabaseContract.FeedEntry.DATABASE_ALTER_1);
+        db.execSQL(SQL_CREATE_ENTRIES);
     }
 
+    @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // This database is only a cache for online data, so its upgrade policy is
-        // to simply to discard the data and start over
-        db.execSQL(DatabaseContract.FeedEntry.SQL_DELETE_ENTRIES);
+        // Drop older table if existed
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
+        // Create tables again
         onCreate(db);
     }
 
@@ -44,30 +53,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public void insertItem(ItemModel item) {
         ContentValues values = new ContentValues();
-        values.put(DatabaseContract.FeedEntry.COLUMN_NAME_IMAGE, item.getImageRes());
-        values.put(DatabaseContract.FeedEntry.COLUMN_NAME_STATUS, 0);
-        values.put(DatabaseContract.FeedEntry.COLUMN_NAME_TITLE, item.getTitle());
-        db.insert(DatabaseContract.FeedEntry.TABLE_NAME, null, values);
-    }
-
-    public void readDatabase() {
-        db = this.getReadableDatabase();
-
-        String[] projection = { BaseColumns._ID, DatabaseContract.FeedEntry.COLUMN_NAME_TITLE, DatabaseContract.FeedEntry.COLUMN_NAME_IMAGE};
-        String selection = DatabaseContract.FeedEntry.COLUMN_NAME_TITLE + " = ?";
-        String[] selectionArgs = { "My Title" };
-        String sortOrder = DatabaseContract.FeedEntry.COLUMN_NAME_IMAGE + " DESC";
-
-        Cursor cursor = db.query(DatabaseContract.FeedEntry.TABLE_NAME, projection,
-                selection, selectionArgs, null, null, sortOrder);
-
-        List itemIds = new ArrayList<>();
-        while (cursor.moveToNext()) {
-            long itemId = cursor.getLong(
-                    cursor.getColumnIndexOrThrow(DatabaseContract.FeedEntry._ID));
-            itemIds.add(itemId);
-        }
-        cursor.close();
+        values.put(COLUMN_NAME_IMAGE, item.getImageRes());
+        values.put(COLUMN_NAME_STATUS, 0);
+        values.put(COLUMN_NAME_TITLE, item.getTitle());
+        db.insert(TABLE_NAME, null, values);
     }
 
     public List<ItemModel> getAllItems() {
@@ -77,15 +66,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         db.beginTransaction();
         try {
-            cursor = db.query(DatabaseContract.FeedEntry.TABLE_NAME, null, null, null, null, null, null, null);
+            cursor = db.query(TABLE_NAME, null, null, null, null, null, null, null);
             if (cursor != null) {
                 if (cursor.moveToFirst()) {
                     do {
                         ItemModel item = new ItemModel();
-                        item.setTitle(cursor.getString(cursor.getColumnIndexOrThrow(DatabaseContract.FeedEntry.COLUMN_NAME_TITLE)));
-                        item.setImageRes(cursor.getString(cursor.getColumnIndexOrThrow(DatabaseContract.FeedEntry.COLUMN_NAME_IMAGE)));
-                        item.setFavoriteStatus(cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseContract.FeedEntry.COLUMN_NAME_STATUS)));
-                        item.setId(cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseContract.FeedEntry._ID)));
+                        item.setTitle(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_NAME_TITLE)));
+                        item.setImageRes(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_NAME_IMAGE)));
+                        item.setFavoriteStatus(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_NAME_STATUS)));
+                        item.setId(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_NAME_ID)));
                         itemsList.add(item);
                     } while (cursor.moveToNext());
                 }
@@ -105,14 +94,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         db.beginTransaction();
         try {
-            cursor = db.query(DatabaseContract.FeedEntry.TABLE_NAME, null, null, null, null, null, null, null);
+            cursor = db.query(TABLE_NAME, null, null, null, null, null, null, null);
             if (cursor != null) {
                 if (cursor.moveToFirst()) {
                     do {
                         ItemModel item = new ItemModel();
-                        item.setTitle(cursor.getString(cursor.getColumnIndexOrThrow(DatabaseContract.FeedEntry.COLUMN_NAME_TITLE)));
-                        item.setImageRes(cursor.getString(cursor.getColumnIndexOrThrow(DatabaseContract.FeedEntry.COLUMN_NAME_IMAGE)));
-                        item.setFavoriteStatus(cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseContract.FeedEntry.COLUMN_NAME_STATUS)));
+                        item.setTitle(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_NAME_TITLE)));
+                        item.setImageRes(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_NAME_IMAGE)));
+                        item.setFavoriteStatus(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_NAME_STATUS)));
                         if (item.getFavoriteStatus() == 1) {
                             favorites.add(item);
                         }
@@ -129,33 +118,31 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public void deleteAll() {
         SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(DatabaseContract.FeedEntry.TABLE_NAME, null, null);
-        db.execSQL("delete from "+ DatabaseContract.FeedEntry.TABLE_NAME);
+        db.delete(TABLE_NAME, null, null);
+        db.execSQL("delete from "+ TABLE_NAME);
         db.close();
     }
 
     public void updateStatus(int id, int status){
         ContentValues cv = new ContentValues();
-        cv.put(DatabaseContract.FeedEntry.COLUMN_NAME_STATUS, status);
-        db.update(TABLE_NAME, cv, DatabaseContract.FeedEntry._ID + "= ?", new String[] {String.valueOf(id)});
+        cv.put(COLUMN_NAME_STATUS, status);
+        db.update(TABLE_NAME, cv, COLUMN_NAME_ID + "= ?", new String[] {String.valueOf(id)});
     }
+
+    public void updateItem(int id, String title) {
+        ContentValues cv = new ContentValues();
+        cv.put(COLUMN_NAME_TITLE, title);
+        db.update(TABLE_NAME, cv, COLUMN_NAME_ID + "= ?", new String[] {String.valueOf(id)});
+    }
+
 
     public void deleteItem(int id) {
-        String selection = DatabaseContract.FeedEntry.COLUMN_NAME_TITLE + " LIKE ?";
+        String selection = COLUMN_NAME_TITLE + " LIKE ?";
         String[] selectionArgs = {String.valueOf(id)};
-        db.delete(DatabaseContract.FeedEntry.TABLE_NAME, selection, selectionArgs);
+        db.delete(TABLE_NAME, selection, selectionArgs);
     }
 
-    public void updateItems(String title, int id) {
-        db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put(DatabaseContract.FeedEntry.COLUMN_NAME_TITLE, title);
 
-        String selection = DatabaseContract.FeedEntry.COLUMN_NAME_TITLE + " LIKE ?";
-        String[] selectionArgs = {String.valueOf(id)};
-
-        db.update(DatabaseContract.FeedEntry.TABLE_NAME, values, selection, selectionArgs);
-    }
 
 }
 
