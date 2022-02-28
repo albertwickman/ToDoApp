@@ -1,7 +1,9 @@
 package com.example.mytest.Adapter;
 
+import android.annotation.SuppressLint;
 import android.content.ClipData;
 import android.content.Context;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,23 +49,11 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     // binds the data to the TextView in each row
     @Override
-    public void onBindViewHolder(RecyclerViewAdapter.ViewHolder viewHolder, int position) {
+    public void onBindViewHolder(RecyclerViewAdapter.ViewHolder viewHolder, @SuppressLint("RecyclerView") int position) {
         db.openDatabase();
         final ItemModel item = itemsList.get(position);
         viewHolder.itemTextView.setText(item.getTitle());
         Glide.with(getContext()).load(item.getImageRes()).into(viewHolder.itemImageView);
-
-        viewHolder.favoriteButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-                if (isChecked) {
-                    item.setFavorite(true);
-                }
-                else {
-                    item.setFavorite(false);
-                }
-            }
-        });
     }
 
     // total number of rows
@@ -88,18 +78,15 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         notifyItemInserted(position);
     }
 
-
     // stores and recycles views as they are scrolled off screen
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView itemTextView;
         ImageView itemImageView;
-        CheckBox favoriteButton;
 
         ViewHolder(View itemView) {
             super(itemView);
             itemTextView = itemView.findViewById(R.id.textCardView);
             itemImageView = itemView.findViewById(R.id.imageCardView);
-            favoriteButton = itemView.findViewById(R.id.favoriteItemButton);
             itemView.setOnClickListener(this);
         }
 

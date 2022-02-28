@@ -13,7 +13,7 @@ import java.util.List;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
-    public static final int VERSION = 1;
+    public static final int VERSION = 2;
     public static final String TABLE_NAME = "FeedReader.db";
 
     private SQLiteDatabase db;
@@ -24,6 +24,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(DatabaseContract.FeedEntry.SQL_CREATE_ENTRIES);
+        //db.execSQL(DatabaseContract.FeedEntry.DATABASE_ALTER_1);
     }
 
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
@@ -43,8 +44,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public void insertItem(ItemModel item) {
         ContentValues values = new ContentValues();
-        values.put(DatabaseContract.FeedEntry.COLUMN_NAME_TITLE, item.getTitle());
         values.put(DatabaseContract.FeedEntry.COLUMN_NAME_IMAGE, item.getImageRes());
+        values.put(DatabaseContract.FeedEntry.COLUMN_NAME_STATUS, 0);
+        values.put(DatabaseContract.FeedEntry.COLUMN_NAME_TITLE, item.getTitle());
         db.insert(DatabaseContract.FeedEntry.TABLE_NAME, null, values);
     }
 
@@ -82,6 +84,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                         ItemModel item = new ItemModel();
                         item.setTitle(cursor.getString(cursor.getColumnIndexOrThrow(DatabaseContract.FeedEntry.COLUMN_NAME_TITLE)));
                         item.setImageRes(cursor.getString(cursor.getColumnIndexOrThrow(DatabaseContract.FeedEntry.COLUMN_NAME_IMAGE)));
+                        item.setFavoriteStatus(cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseContract.FeedEntry.COLUMN_NAME_STATUS)));
+                        item.setId(cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseContract.FeedEntry._ID)));
                         itemsList.add(item);
                     } while (cursor.moveToNext());
                 }
@@ -108,7 +112,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                         ItemModel item = new ItemModel();
                         item.setTitle(cursor.getString(cursor.getColumnIndexOrThrow(DatabaseContract.FeedEntry.COLUMN_NAME_TITLE)));
                         item.setImageRes(cursor.getString(cursor.getColumnIndexOrThrow(DatabaseContract.FeedEntry.COLUMN_NAME_IMAGE)));
-                        if (item.isFavorite()) {
+                        item.setFavoriteStatus(cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseContract.FeedEntry.COLUMN_NAME_STATUS)));
+                        if (item.getFavoriteStatus() == 1) {
                             favorites.add(item);
                         }
                     } while (cursor.moveToNext());
@@ -129,6 +134,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
     }
 
+    public void updateStatus(int id, int status){
+        ContentValues cv = new ContentValues();
+        cv.put(DatabaseContract.FeedEntry.COLUMN_NAME_STATUS, status);
+        db.update(TABLE_NAME, cv, DatabaseContract.FeedEntry._ID + "= ?", new String[] {String.valueOf(id)});
+    }
+
     public void deleteItem(int id) {
         String selection = DatabaseContract.FeedEntry.COLUMN_NAME_TITLE + " LIKE ?";
         String[] selectionArgs = {String.valueOf(id)};
@@ -147,4 +158,5 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
 }
+
 

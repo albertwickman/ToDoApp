@@ -118,6 +118,7 @@ public class AddNewItem extends BottomSheetDialogFragment {
                     ItemModel item = new ItemModel();
                     item.setTitle(text);
                     item.setImageRes(imageRes);
+                    item.setFavoriteStatus(0);
                     itemsList.add(item);
                     inputText.getText().clear();
                     createToast(text + " has been added!");
@@ -129,8 +130,6 @@ public class AddNewItem extends BottomSheetDialogFragment {
                 }
             }
         });
-
-
         return view;
     }
 

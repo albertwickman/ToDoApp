@@ -4,16 +4,25 @@ import android.net.Uri;
 
 public class ItemModel {
 
+    private int id;
     private String title;
     private String imageRes;
-    private boolean isFavorite;
+    private int favoriteStatus;
 
-    public boolean isFavorite() {
-        return isFavorite;
+    public int getId() {
+        return id;
     }
 
-    public void setFavorite(boolean favorite) {
-        isFavorite = favorite;
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getFavoriteStatus() {
+        return favoriteStatus;
+    }
+
+    public void setFavoriteStatus(int favoriteStatus) {
+        this.favoriteStatus = favoriteStatus;
     }
 
     public String getTitle() {

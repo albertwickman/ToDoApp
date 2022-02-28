@@ -46,7 +46,8 @@ public class FavoritesActivity extends AppCompatActivity implements FavoritesRec
 
         System.out.println(db.getAllItems());
         System.out.println(db.getFavorites());
-        System.out.println(db.getAllItems().get(0).isFavorite());
+        System.out.println(db.getAllItems().get(0).getFavoriteStatus());
+
 
     }
 
