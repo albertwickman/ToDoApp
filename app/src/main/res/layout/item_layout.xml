@@ -9,8 +9,7 @@
     app:cardBackgroundColor="@color/white"
     app:cardMaxElevation="12dp"
     app:cardPreventCornerOverlap="true"
-    app:cardUseCompatPadding="true"
-    >
+    app:cardUseCompatPadding="true">
 
     <RelativeLayout
         android:id="@+id/relativeLayount"
@@ -27,13 +26,21 @@
 
         <TextView
             android:id="@+id/textCardView"
-            android:layout_width="260dp"
+            android:layout_width="240dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="32dp"
             android:textSize="24sp"
+            android:layout_centerVertical="true"
             android:textStyle="bold">
         </TextView>
 
+        <CheckBox
+            android:id="@+id/checkbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true">
+        </CheckBox>
 
     </RelativeLayout>
 
